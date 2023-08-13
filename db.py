@@ -189,7 +189,6 @@ class DataBase:
         with self.connection:
             self.cursor.execute(f"SELECT data FROM schedule_data WHERE data_id = :data_id and game = :game", ({ "data_id": data_id, "game": game}))
             res = self.cursor.fetchone()
-            print(res)
             return res
 
     def select_game_us(self, user_id):
@@ -207,7 +206,6 @@ class DataBase:
         with self.connection:
             self.cursor.execute("SELECT game_id FROM schedule_games WHERE data_id = :data_id and time = :time and step = 'complited'", ({"data_id": data_id, "time": time}))
             res = self.cursor.fetchone()
-            print(res)
             return res
         
     def select_place(self, game_id):
@@ -297,7 +295,8 @@ class DataBase:
     def countprog(self, user_id):
         with self.connection:
             self.cursor.execute("SELECT COUNT(*) FROM prog_reg_to_games WHERE user_id = ?", (user_id,))
-            self.cursor.fetchall()
+            res = self.cursor.fetchall()
+            return res
 
     def start_inf(self, user_id):
         with self.connection:
@@ -312,10 +311,14 @@ class DataBase:
         with self.connection:
             self.cursor.execute("SELECT game FROM schedule_data WHERE data_id = :data_id", ({"data_id": data_id}))
             res = self.cursor.fetchone()
-            print(res)
             return res
 
     def del_all_inf(self, uid):
         with self.connection:
             self.cursor.execute("DELETE FROM reg_users WHERE user_id = ?", (uid,))
             self.cursor.execute("DELETE FROM com_reg_to_games WHERE user_id = ?", (uid,))
+    
+    def click_payment(self, user_id):
+        with self.connection:
+            self.cursor.execute("SELECT payment FROM prog_reg_to_games WHERE user_id = ?", (user_id,))
+            return self.cursor.fetchone()

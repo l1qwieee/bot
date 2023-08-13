@@ -1,10 +1,15 @@
-from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardRemove
+defualtkb = []
 
 #1
 btnReg = KeyboardButton(text='Узнать кто записался')
 btnSch = KeyboardButton(text='Настроить расписание')
-
-whoreg = ReplyKeyboardMarkup(resize_keyboard=True, keyboard=[[btnReg, btnSch]])
+btnNewus = KeyboardButton(text='Записать нового пользователя')
+defualtkb.append([btnReg])
+defualtkb.append([btnSch])
+defualtkb.append([btnNewus])
+whoreg = ReplyKeyboardMarkup(resize_keyboard=True, keyboard=defualtkb)
+defualtkb.clear()
 
 #2
 btnVB = KeyboardButton(text='🏐 ВОЛЕЙБОЛ')
@@ -19,10 +24,10 @@ def kbdata(days):
     days.clear()
     return inkb1
 
-def kbtime(times):
+def kbtime(times, seats):
     keyboard = []
-    for count in times:
-        button = InlineKeyboardButton(text=f"{count}", callback_data=f"9{count}")
+    for count, item in zip(times, seats):
+        button = InlineKeyboardButton(text=f"{count}({item} мест)", callback_data=f"9{count}")
         keyboard.append([button])
 
     inkb2 = InlineKeyboardMarkup(inline_keyboard=keyboard)
@@ -65,3 +70,40 @@ btndel = InlineKeyboardButton(text="Удалить дату", callback_data="del
 btnchange = InlineKeyboardButton(text="Поменять дату", callback_data="change")
 
 kbset = InlineKeyboardMarkup(row_width=2, inline_keyboard=[[btndel, btnchange]])
+
+
+btnNext = KeyboardButton(text="Следующий шаг")
+btnBack = KeyboardButton(text="Назад")
+
+kbstep = ReplyKeyboardMarkup(resize_keyboard=True, keyboard=[[btnNext, btnBack]])
+
+
+btn1 = KeyboardButton(text="1👍")
+btn2 = KeyboardButton(text="2👎")
+admuser = ReplyKeyboardMarkup(resize_keyboard=True, keyboard=[[btn1, btn2]])
+
+btnCash = KeyboardButton(text='💷 Наличные')
+btnCard = KeyboardButton(text='💳 Перевод')
+defualtkb.append([btnCash])
+defualtkb.append([btnCard])
+
+payment = ReplyKeyboardMarkup(resize_keyboard=True, keyboard=defualtkb)
+defualtkb.clear()
+
+btn_1 = KeyboardButton(text='1')
+btn_2= KeyboardButton(text='2')
+btn_3 = KeyboardButton(text='3')
+btn_4 = KeyboardButton(text='4')
+btn_5 = KeyboardButton(text='5')
+btn_6 = KeyboardButton(text='6')
+btn_itsok = KeyboardButton(text='Завершить регистрацию')
+defualtkb.append([btn_1, btn_2, btn_3])
+defualtkb.append([btn_4, btn_5, btn_6])
+defualtkb.append([btn_itsok])
+
+
+chang_the_data = ReplyKeyboardMarkup(resize_keyboard=True, keyboard=defualtkb)
+defualtkb.clear()
+
+
+kbremove = ReplyKeyboardRemove()

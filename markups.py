@@ -1,6 +1,7 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton, InlineKeyboardMarkup, InlineKeyboardButton
 import logging
 
+defualtkb = []
 #1
 btnreg = InlineKeyboardButton(text='Регистрация', callback_data="yes")
 kb = InlineKeyboardMarkup(row_width=2,inline_keyboard=[[btnreg]])
@@ -11,8 +12,10 @@ kb = InlineKeyboardMarkup(row_width=2,inline_keyboard=[[btnreg]])
 
 btnVB = KeyboardButton(text='🏐 ВОЛЕЙБОЛ')
 btnFB = KeyboardButton(text='⚽️ ФУТБОЛ')
-
-mainGames = ReplyKeyboardMarkup(resize_keyboard=True,keyboard=[[btnVB, btnFB]])
+defualtkb.append([btnVB])
+defualtkb.append([btnFB])
+mainGames = ReplyKeyboardMarkup(resize_keyboard=True,keyboard=defualtkb)
+defualtkb.clear()
 #mainGames = ReplyKeyboardMarkup(resize_keyboard=True,keyboard=[[KeyboardButton(text='🏐 ВОЛЕЙБОЛ'), KeyboardButton(text='⚽️ ФУТБОЛ')]])
 #mainGames.add(btnVB, btnFB)
 
@@ -28,8 +31,14 @@ btnRul = KeyboardButton(text='📋 Правила')
 btnRecom = KeyboardButton(text='🤙 Рекомендации к тренировке')
 btnMakeing = KeyboardButton(text='😎 Записаться')
 btnSchedule = KeyboardButton(text='🗓 Расписание')
+defualtkb.append([btnRul])
+defualtkb.append([btnRecom])
+defualtkb.append([btnMakeing])
+defualtkb.append([btnSchedule])
 
-detalis = ReplyKeyboardMarkup(resize_keyboard=True, keyboard=[[btnRul, btnRecom, btnMakeing, btnSchedule, btnBack]])
+detalis = ReplyKeyboardMarkup(resize_keyboard=True, keyboard=defualtkb)
+
+defualtkb.clear()
 #detalis.add(btnRul, btnRecom, btnMakeing, btnSchedule, btnBack)
 
 #5
@@ -69,16 +78,22 @@ def timekb(time: list, place: list):
 
 btnCash = KeyboardButton(text='💷 Наличные')
 btnCard = KeyboardButton(text='💳 Перевод')
+defualtkb.append([btnCash])
+defualtkb.append([btnCard])
 
-choisePay = ReplyKeyboardMarkup(resize_keyboard=True, keyboard=[[btnCash, btnCard, btnBack]])
+choisePay = ReplyKeyboardMarkup(resize_keyboard=True, keyboard=defualtkb)
+defualtkb.clear()
 #choisePay.add(btnCash, btnCard, btnBack)
 
 #6
 
 btnInf = KeyboardButton(text='Узнать информацию о себе')
+defualtkb.append([btnInf])
+defualtkb.append([btnBack])
 
-kbINFO = ReplyKeyboardMarkup(resize_keyboard=True, keyboard=[[btnInf, btnBack]])
+kbINFO = ReplyKeyboardMarkup(resize_keyboard=True, keyboard=defualtkb)
 #kbINFO.add(btnInf, btnBack)
+defualtkb.clear()
 
 btnyes = KeyboardButton(text='Да')
 btnno = KeyboardButton(text='Нет')
@@ -120,11 +135,26 @@ kbgames = InlineKeyboardMarkup(row_width=2, inline_keyboard=[[btnfoot, btnvoll]]
 #kbgames.add(btnfoot, btnvoll)
 
 btnBack2 = KeyboardButton(text='◀️ Назад')
-back = ReplyKeyboardMarkup(resize_keyboard=True, keyboard=[[btnBack2]])
+defualtkb.append([btnBack2])
+back = ReplyKeyboardMarkup(resize_keyboard=True, keyboard=defualtkb)
+defualtkb.clear()
+
 #back.add(btnBack2)
 
 btncom = KeyboardButton(text='Завершить регистрацию')
+defualtkb.append([btncom, btnBack])
 kbcom = ReplyKeyboardMarkup(resize_keyboard=True, keyboard=[[btncom, btnBack]])
+defualtkb.clear()
+
+btnSolo = KeyboardButton(text='Я буду один')
+btnDuo = KeyboardButton(text='Нас будет двое')
+btnTrio = KeyboardButton(text='Нас будет трое')
+defualtkb.append([btnSolo])
+defualtkb.append([btnDuo])
+defualtkb.append([btnTrio])
+
+Kbofseats = ReplyKeyboardMarkup(resize_keyboard=True, keyboard=defualtkb)
+defualtkb.clear()
 
 
 

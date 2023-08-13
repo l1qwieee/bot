@@ -48,29 +48,35 @@ db = DataBase('database.db')
 async def vector_mes(message: types.Message, state: FSMContext) -> None:
     if message.text == '/start':
         await startt(message)
-    elif message.text =='/re_reg':
+    elif message.text =='/reg':
         await re_reg_com(message)
-    if db.count(message.from_user.id) != None:
-        if message.text == '🏐 ВОЛЕЙБОЛ' or message.text == '⚽️ ФУТБОЛ':
-            await choice_game(message, True)
-        elif message.text == '🗓 Расписание' or message.text == '📋 Правила' or message.text == '🤙 Рекомендации к тренировке' or message.text =='😎 Записаться':
-            await studying(message, True)
-        elif message.text.isdigit() and 0 < int(message.text):
-            await quantity_people(message, True)
-        elif message.text == '💷 Наличные' or message.text == '💳 Перевод':
-            await pay(message, True)
-        elif message.text == '/help':
-            await help_com(message)
-        elif message.text == '/delete':
-            await delete_comm(message)
-        elif message.text == 'Узнать информацию о себе':
-            await inf(message)
-        elif message.text == 'Да' or message.text == 'Нет':
-            await delete_inf(message)
-        elif message.text == '◀️ Назад':
-            await goback(message)
-        elif message.text == 'Завершить регистрацию':
-            await complete_registration(message)
+    elif message.text =='/inf':
+        await inf(message)
+  #  else:
+   #     await bot.send_message(message.from_user.id, text="Я вас не понимаю")
+    elif message.text == '🏐 ВОЛЕЙБОЛ' or message.text == '⚽️ ФУТБОЛ':
+        await choice_game(message, True)
+        await notification(message)
+    elif message.text == '🗓 Расписание' or message.text == '📋 Правила' or message.text == '🤙 Рекомендации к тренировке' or message.text =='😎 Записаться':
+        await studying(message, True)
+    elif message.text.isdigit() and 0 < int(message.text):
+        await quantity_people(message, True)
+    elif message.text == '💷 Наличные' or message.text == '💳 Перевод':
+        await pay(message, True)
+    elif message.text == '/help':
+        await help_com(message)
+    elif message.text == '/delete':
+        await delete_comm(message)
+    elif message.text == 'Я буду один' or message.text == 'Нас будет двое' or message.text == 'Нас будет трое':
+        await seats_mes(message, True)
+    elif message.text == 'Узнать информацию о себе':
+        await inf(message)
+    elif message.text == 'Да' or message.text == 'Нет':
+        await delete_inf(message)
+    elif message.text == '◀️ Назад':
+        await goback(message)
+    elif message.text == 'Завершить регистрацию':
+        await complete_registration(message)
     else:
         await bot.send_message(message.from_user.id, text="ZzZzZzZz")
 
@@ -102,13 +108,13 @@ async def vector_call(query: types.CallbackQuery):
             ch = query.data[1:]
             await call_back_inf(ch, query)
     else:
-        await bot.send_message(query.from_user.id, text="ZzZzZzZz")
+        await bot.send_message(query.from_user.id, text="Я вас не понимаю")
 
 
 #Начало/Регистрация нового пользолвателя
 async def startt(message: types.Message):
     if db.chek_reg(message.from_user.id) == 1:
-        await bot.send_message(message.from_user.id, text="Бро, ты уже зарегестрирован) Для того, чтоб тебе повторно зарегаться на нашу игру нажми /re_reg")
+        await bot.send_message(message.from_user.id, text="Бро, ты уже зарегестрирован) Для того, чтоб тебе повторно зарегаться на нашу игру нажми /reg")
     else:
         db.add_new_user(message.from_user.id, "users")
         await bot.send_message(message.from_user.id, "Привет! Я бот который будет вас регистрировать на игры по волейболу или футболу! Но для начала прошу вас зарегестрироваться)", reply_markup=nav.kb)
@@ -148,7 +154,7 @@ async def choice_game(message: types.Message, vector):
             db.update_prog_reg("game", "volleyball", "lvl2", message.from_user.id)
         elif message.text == '⚽️ ФУТБОЛ':
             db.update_prog_reg("game", "football", "lvl2", message.from_user.id)
-        await bot.send_message(message.from_user.id, "Как на счет изучить, что мы можем предложить?", reply_markup=nav.detalis)
+        await bot.send_message(message.from_user.id, "Вы в меню опций", reply_markup=nav.detalis)
 
 #Предложение изучить что есть у нас и продолжить регистрацию
 async def studying(message: types.Message, vector):
@@ -214,7 +220,7 @@ async def show_schedule_data(message: types.Message, vector):
             prev_data_str = data
         #logging.warning(nav.inkb())
         db.update_prog_reg("day", "progress", "lvl3", message.from_user.id)
-        await bot.send_message(message.from_user.id, text="А теперь выберите в какой день недели вы хотите поиграть", reply_markup=nav.inkb(data_list, days_list))
+        await bot.send_message(message.from_user.id, text="Выберете дату:", reply_markup=nav.inkb(data_list, days_list))
 
 #Генирация времени
 async def show_schedule_time(message: types.CallbackQuery, day, vector):
@@ -229,14 +235,12 @@ async def show_schedule_time(message: types.CallbackQuery, day, vector):
         places = []
         game = db.select_game(message.from_user.id)[0]
         data_id = db.select_id_wh_data(day, game)[0]
-        print(data_id)
         row = db.return_info(data_id)
-        print(row)
         for item in row:
             times.append(item[0])
             places.append(item[1])
         db.update_prog_reg("day", day, "lvl4", message.from_user.id)
-        await bot.send_message(message.from_user.id, text="Выберете время проведения игры", reply_markup=nav.timekb(times, places))
+        await bot.send_message(message.from_user.id, text="Выберите время:", reply_markup=nav.timekb(times, places))
 
 #Выбор времени
 async def call_back_time(ch, query: types.CallbackQuery, vector):
@@ -247,7 +251,8 @@ async def call_back_time(ch, query: types.CallbackQuery, vector):
     if bool == False:
         await bot.send_message(query.from_user.id, text="Большая просьба: регестрируйтесь пошагово и отвечайте на вопрос только если бот его вам задает прямо сейчас")
     else:
-        await bot.send_message(query.from_user.id, f"Хорошо, регестрирую вас на {ch}\n А теперь напишите сколько человек мне с вами регистрировать (или вас одного все же?):")
+        data = db.click_data(query.from_user.id)[0]
+        await bot.send_message(query.from_user.id, f"Регестрация на {data}({ch}) идет успешно\n А теперь НАПИШИТЕ или ВЫБЕРИТЕ ниже сколько человек мне с вами регистрировать (или вас одного все же?):", reply_markup=nav.Kbofseats)
         db.update_prog_reg("time", ch, "lvl5", query.from_user.id)
 
 
@@ -270,12 +275,39 @@ async def quantity_people(message: types.Message, vector):
             if int(message.text) <= row:
                 db.update_prog_reg("people", int(message.text), "lvl6", message.from_user.id)
                 db.update_places((row - int(message.text)), data_id, game_id)
-                await bot.send_message(message.from_user.id, text="Хорошо, данные внесены. Теперь пожалуйста выберете cпособ оплаты", reply_markup=nav.choisePay)
+                await bot.send_message(message.from_user.id, text="Выберите способ оплаты", reply_markup=nav.choisePay)
             else:
                 await bot.send_message(message.from_user.id, text="Столько мест на эту игру нет. Введите другое количество людей или выбирете другую дату")
         else:
             await bot.send_message(message.from_user.id, text="Я могу записать вас на игру, но при условии что вас будет 11 или меньше человек")
 
+async def seats_mes(message: types.Message, vector):
+    if vector == True:
+        bool = await check_lvl(message, "lvl5", vector)
+    else:
+        bool = await check_lvl(message, "maxlvl", vector)
+    if bool == False:
+        await bot.send_message(message.from_user.id, text="Большая просьба: регестрируйтесь пошагово и отвечайте на вопрос только если бот его вам задает прямо сейчас")
+    else:
+        if message.text == 'Я буду один':
+            seats = 1
+        elif message.text == 'Нас будет двое':
+            seats = 2
+        elif message.text == 'Нас будет трое':
+            seats = 3
+        
+        res_data = db.select_game_us(message.from_user.id)[1]
+        res_time = db.select_game_us(message.from_user.id)[2]
+        game = db.select_game(message.from_user.id)[0]
+        data_id = db.select_id_wh_data(res_data, game)[0]
+        game_id = db.select_game_id(data_id, res_time)[0]
+        row = db.select_place(game_id)[0]
+        if seats <= row:
+            db.update_prog_reg("people", seats, "lvl6", message.from_user.id)
+            db.update_places((row - seats), data_id, game_id)
+            await bot.send_message(message.from_user.id, text="Выберите способ оплаты", reply_markup=nav.choisePay)
+        else:
+            await bot.send_message(message.from_user.id, text="Столько мест на эту игру нет. Введите другое количество людей или выбирете другую дату кликнув на кнопку ◀️ Назад")
 #Оплата
 async def pay(message: types.Message, vector):
     bool = await check_lvl(message, "lvl6", vector)
@@ -291,7 +323,13 @@ async def pay(message: types.Message, vector):
             await bot.send_message(message.from_user.id, "Ну что ж тогда вот реквизиты:\n 012350237481923\n Мухамед Абдул\n 300TL за человека\n По всем интересующим вас вопросам, большая просьба обращаться к админу группы)",
                                 reply_markup=nav.kbcom)
         db.update_prog_reg("payment", mes, "maxlvl", message.from_user.id)
-        await bot.send_message(message.from_user.id, text="Для завершения регистрации на игру нажмите:\nЗавершить регистрацию\nДля того чтобы исправить какие то данные при регистрации вернитесь назад:\n◀️ Назад")
+        game = db.click_game(message.from_user.id)[0]
+        data= db.click_data(message.from_user.id)[0]
+        time = db.click_time(message.from_user.id)[0]
+        seats = db.click_people(message.from_user.id)[0]
+        payment = db.click_payment(message.from_user.id)[0]
+        await bot.send_message(message.from_user.id, text=f"Вы зарегестировались на игру по: {game}\nНа дату: {data}\nПо времени: {time}\nБудет человек: {seats}\nСпособ оплаты: {payment}")
+        await bot.send_message(message.from_user.id, text="Если все данные верны, нажмите:\nЗавершить регистрацию\nДля того чтобы исправить вернитесь назад:\n◀️ Назад")
 
 
 #Завершение регистрации
@@ -344,16 +382,16 @@ async def relevance():
 
 
 async def help_com(message: types.Message):
-    await bot.send_message(message.from_user.id, "Привет! Я тг бот, который будет вас, а возможно не только вас, регестрировать на волейбол или футбол в стумбуле\nВот мой полный смписок команд:\n/help - это та же команда, что и сейчас вы нажали\n/re_reg - зарегистрирую вас заново на любую игру\n/delete - помогу выбрать и удалить любую информацию которую вы мне когда либо сообщали)")
+    await bot.send_message(message.from_user.id, "Привет! Я тг бот, который будет вас, а возможно не только вас, регестрировать на волейбол или футбол в стумбуле\nВот мой полный смписок команд:\n/help - это та же команда, что и сейчас вы нажали\n/reg - зарегистрирую вас на любую игру\n/delete - помогу выбрать и удалить любую информацию которую вы мне когда либо сообщали)\n/inf - тут вы сможите посмотреть на какие игры у вас в будущем")
 
 
 
 async def delete_comm(message: types.Message):
-    await bot.send_message(message.from_user.id, text="Окей, выбери какую информацию ты хочешь удалить:", reply_markup=nav.kbDEL)
+    await bot.send_message(message.from_user.id, text="Выберите какую информацию вы хотите удалить:", reply_markup=nav.kbDEL)
 
 async def call_back_delete(ch, query: types.CallbackQuery):
     if ch == "game":
-        await bot.send_message(query.from_user.id, text="Окей, запись на какую игру вы хотите удалить?", reply_markup=nav.kbgames)
+        await bot.send_message(query.from_user.id, text="Запись на какую игру вы хотите удалить?", reply_markup=nav.kbgames)
     elif ch == "all":
         db.del_all_inf(query.from_user.id)
         reply_markup = types.ReplyKeyboardRemove()
@@ -365,7 +403,7 @@ async def call_back_games(ch, query: types.CallbackQuery):
     elif ch ==  "volleyball":
         await choice_data(query, "volleyball")
 
-async def   choice_data(message: types.Message, game):
+async def choice_data(message: types.Message, game):
     choice_data_us = []
     choice_time = []
     db.start_inf(message.from_user.id)
@@ -373,13 +411,10 @@ async def   choice_data(message: types.Message, game):
     result = [item[0] for item in game_id]
     for item in result:
         game_inf = db.sel_data(item, game)
-        print(game_inf)
         data_id = game_inf[0]
         if db.chek_game(data_id)[0] == game:
-            print(data_id)
             choice_time.append(game_inf[1])
-            print(data_id, game)
-            data_user = db.select_data(data_id)[0]
+            data_user = db.select_data(data_id, game)[0]
             choice_data_us.append(data_user)
 
     if choice_data_us != []:
@@ -401,10 +436,10 @@ async def delete_inf(message: types.Message):
     if message.text == 'Да':
         game_id = db.s_game_id(message.from_user.id)[0]
         db.del_inf_game(message.from_user.id, game_id)
-        await bot.send_message(message.from_user.id, text="Ваша запись на эту игру удалена", reply_markup=nav.mainGames)
+        await bot.send_message(message.from_user.id, text="Ваша запись на эту игру удалена", reply_markup=nav.kbgames)
     else:
-        pass
-    await bot.send_message(message.from_user.id, text="Вот несколько команд которые я знаю\n /help - информация обо мне тут\n /re_reg - если бы уже регестрировались во мне, то повторно все делать не нужно) надо просто выбрать игру в которую вы хотите сыграть)\nНу или напишите мне в чат - Узнать информацию о себе")
+        await bot.send_message(message.from_user.id, text="Выберете игру:", reply_markup=nav.kbgames)
+    await bot.send_message(message.from_user.id, text="Для выхода в главное меню нажмите на кнопку снизу", reply_markup=nav.kbback)
  #   choice = []
  #   ch_list = db.select_entry("day", message.from_user.id, game)
  #   for ch in ch_list:
@@ -500,7 +535,10 @@ async def inf(message: types.Message):
 async def goback(message: types.Message):
     lvls = ['lvl1', 'lvl2', 'lvl3', 'lvl4', 'lvl5', 'lvl6', 'maxlvl' ]
     print(db.countprog(message.from_user.id))
-    if db.countprog(message.from_user.id) != None:
+    dd = db.countprog(message.from_user.id)
+    result = [item[0] for item in dd]
+    print(result)
+    if result[0] != 0:
 
         lvl = db.sel_lvl(message.from_user.id)[0]
         i = 0
@@ -523,8 +561,6 @@ async def goback(message: types.Message):
             await choice_game(game_mes, False)
         elif backstep == 'lvl3':
             await show_schedule_data(message, False)
-
-
         elif backstep == 'lvl4':
             ch = db.click_data(message.from_user.id)[0]
             await show_schedule_time(message, ch, False)
@@ -548,7 +584,8 @@ def return_seats(message: types.Message):
     if p != None:
         res_data = db.select_game_us(message.from_user.id)[1]
         res_time = db.select_game_us(message.from_user.id)[2]
-        data_id = db.select_id_wh_data(res_data)[0]
+        game = db.select_game(message.from_user.id)[0]
+        data_id = db.select_id_wh_data(res_data, game)[0]
         game_id = db.select_game_id(data_id, res_time)[0]
         row = db.select_place(game_id)[0]
         db.update_places((row + p), data_id, game_id)
@@ -592,6 +629,22 @@ async def check_lvl(message: types.Message, lvl, vector):
             res = True
         
     return res
+
+
+
+#Проверка на не законченную регистрацию
+async def notification(message: types.Message):
+    await asyncio.sleep(3600)
+    count = db.count(message.from_user.id)
+    result = [item[0] for item in count]
+
+    if result[0] != 0:
+        await bot.send_message(message.from_user.id, text="Хэй, кажется, вы начали регистрацию, но забыли про нее😞\nВам очень повезло, что я такой заботливый и напоминаю вам об этом")
+    
+    await asyncio.sleep(3600)
+    if result[0] != 0:
+        await bot.send_message(message.from_user.id, text="Ну что ж, буду ждать вас снова!")
+        db.del_prog_to_game(message.from_user.id)
 
 async def main():
     dp = Dispatcher()
